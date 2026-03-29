@@ -1,0 +1,18 @@
+package btgioi4;
+
+import java.util.*;
+
+class FileOrderRepository implements OrderRepository {
+    private List<Order> orders = new ArrayList<>();
+
+    @Override
+    public void save(Order order) {
+        orders.add(order);
+        System.out.println("Lưu đơn hàng vào file: " + order.getId());
+    }
+
+    @Override
+    public List<Order> findAll() {
+        return orders;
+    }
+}
