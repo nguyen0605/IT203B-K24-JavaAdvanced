@@ -1,0 +1,9 @@
+Trong đoạn chương trình trên, nguyên nhân chính dẫn đến việc dữ liệu bị sai lệch là do cơ chế Auto-Commit mặc định của JDBC. Theo đó, khi một kết nối đến cơ sở dữ liệu được tạo ra, chế độ auto-commit sẽ tự động được bật (true). Điều này có nghĩa là mỗi câu lệnh SQL được thực thi sẽ được xem như một giao dịch độc lập và sẽ được commit ngay lập tức sau khi thực thi thành công.
+
+Cụ thể trong trường hợp này, câu lệnh đầu tiên dùng để cập nhật số lượng thuốc trong kho (UPDATE Medicine_Inventory) được thực thi thành công. Ngay sau khi lệnh này chạy xong, hệ thống đã tự động commit thay đổi này vào cơ sở dữ liệu. Do đó, việc trừ thuốc đã được ghi nhận vĩnh viễn.
+
+Tuy nhiên, ngay sau đó chương trình gặp lỗi (do phép chia cho 0 gây ra RuntimeException), khiến cho các câu lệnh tiếp theo, đặc biệt là câu lệnh ghi lịch sử cấp phát thuốc (INSERT INTO Prescription_History), không được thực thi. Khi lỗi xảy ra, chương trình chuyển vào khối catch, nhưng vì không có cơ chế rollback, nên những thay đổi đã được commit trước đó không thể bị hoàn tác.
+
+Kết quả là hệ thống rơi vào trạng thái không nhất quán: thuốc trong kho đã bị trừ nhưng không có bản ghi tương ứng trong lịch sử cấp phát. Điều này vi phạm nguyên lý Atomicity (tính nguyên tử) trong transaction, vốn yêu cầu rằng một nhóm các thao tác phải được thực hiện hoàn toàn hoặc không thực hiện gì cả.
+
+Tóm lại, lỗi xảy ra là do lập trình viên không kiểm soát transaction một cách thủ công mà phụ thuộc vào cơ chế auto-commit mặc định, dẫn đến việc các thao tác không được đảm bảo thực hiện như một khối thống nhất.

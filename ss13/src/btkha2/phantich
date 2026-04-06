@@ -1,0 +1,14 @@
+Trong đoạn chương trình trên, mặc dù lập trình viên đã tắt chế độ auto-commit và chủ động gọi commit() khi hoàn tất giao dịch, nhưng việc xử lý lỗi trong khối catch lại chưa đúng nguyên tắc của Transaction.
+
+Cụ thể, khi xảy ra lỗi ở bước thứ hai (ví dụ do câu lệnh SQL sai tên bảng), hệ thống sẽ ném ra SQLException và chương trình chuyển vào khối catch. Tuy nhiên, tại đây lập trình viên chỉ đơn thuần in ra thông báo lỗi bằng System.out.println() mà không thực hiện bất kỳ hành động nào để xử lý trạng thái của giao dịch đang dang dở.
+
+Điều này vi phạm nguyên tắc của Transaction, đặc biệt là tính Atomicity (tính nguyên tử). Trong một giao dịch, nếu bất kỳ bước nào thất bại, toàn bộ các thao tác trước đó phải được hoàn tác (rollback) để đảm bảo dữ liệu không bị thay đổi một phần. Trong trường hợp này, mặc dù dữ liệu chưa được commit, nhưng transaction vẫn đang ở trạng thái "chưa завершено" (dang dở) và giữ các thay đổi tạm thời trong kết nối.
+
+Việc không gọi rollback() khiến cho:
+
+Các thay đổi trước đó (như trừ tiền trong ví) vẫn đang nằm trong transaction chưa hoàn tất
+Kết nối cơ sở dữ liệu bị giữ trạng thái giao dịch mở (open transaction)
+Có thể gây khóa tài nguyên (lock), làm ảnh hưởng đến các thao tác khác trong hệ thống
+Dẫn đến tình trạng "treo kết nối" hoặc suy giảm hiệu năng hệ thống
+
+Hành động thiết yếu mà lập trình viên đã bỏ quên chính là gọi phương thức rollback() trong khối catch để hủy bỏ toàn bộ giao dịch khi xảy ra lỗi, đưa cơ sở dữ liệu trở về trạng thái nhất quán trước khi transaction bắt đầu.
