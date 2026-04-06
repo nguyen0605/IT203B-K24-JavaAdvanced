@@ -1,0 +1,7 @@
+Khi sử dụng Statement và thực thi câu lệnh SQL bằng cách nối chuỗi trong một vòng lặp lớn (ví dụ 1.000 lần), mỗi lần thực thi, Database Server phải thực hiện lại toàn bộ các bước xử lý câu lệnh SQL, bao gồm: phân tích cú pháp (Parse), kiểm tra tính hợp lệ, tối ưu hóa và lập kế hoạch thực thi (Execution Plan).
+
+Việc lặp lại quá trình này nhiều lần cho cùng một cấu trúc câu lệnh gây ra sự lãng phí tài nguyên nghiêm trọng. Cụ thể, CPU của Database Server phải liên tục xử lý lại cùng một câu lệnh, thay vì tái sử dụng kế hoạch đã có. Điều này làm tăng độ trễ, giảm hiệu năng tổng thể của hệ thống và có thể gây nghẽn khi xử lý khối lượng lớn dữ liệu, đặc biệt trong các tình huống như nạp hàng loạt kết quả xét nghiệm vào buổi sáng.
+
+PreparedStatement giúp giải quyết vấn đề này bằng cách cho phép câu lệnh SQL được biên dịch trước (pre-compiled) ngay từ lần đầu tiên. Khi PreparedStatement được tạo ra, Database Server sẽ phân tích và tạo Execution Plan một lần duy nhất. Trong các lần thực thi tiếp theo, chỉ cần truyền giá trị tham số mới mà không cần phân tích lại câu lệnh.
+
+Nhờ đó, hệ thống giảm đáng kể chi phí xử lý trên Database Server, tận dụng được cơ chế tái sử dụng Execution Plan, từ đó cải thiện hiệu năng rõ rệt khi xử lý số lượng lớn truy vấn giống nhau.

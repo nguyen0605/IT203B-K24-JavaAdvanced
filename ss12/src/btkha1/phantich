@@ -1,0 +1,7 @@
+Lỗ hổng SQL Injection xảy ra khi dữ liệu đầu vào từ người dùng được chèn trực tiếp vào câu lệnh SQL mà không qua kiểm soát. Trong trường hợp hệ thống đăng nhập bác sĩ, nếu sử dụng cách nối chuỗi để tạo câu lệnh SQL, kẻ tấn công có thể nhập các giá trị đặc biệt như ' OR '1'='1 vào trường mật khẩu. Khi đó, câu lệnh SQL sẽ bị thay đổi về mặt logic, khiến điều kiện truy vấn luôn đúng và cho phép đăng nhập trái phép mà không cần thông tin hợp lệ.
+
+PreparedStatement được coi là “tấm khiên” chống lại SQL Injection vì nó tách biệt hoàn toàn giữa câu lệnh SQL và dữ liệu đầu vào. Khi sử dụng PreparedStatement, câu lệnh SQL được định nghĩa trước với các tham số dạng dấu hỏi chấm (?), sau đó được gửi xuống hệ quản trị cơ sở dữ liệu để biên dịch trước (pre-compiled). Quá trình biên dịch này giúp cơ sở dữ liệu hiểu rõ cấu trúc của câu lệnh mà không phụ thuộc vào dữ liệu cụ thể.
+
+Sau khi câu lệnh đã được biên dịch, các giá trị đầu vào của người dùng sẽ được truyền vào thông qua các phương thức như setString(). Những giá trị này chỉ được xem như dữ liệu thuần túy, không thể làm thay đổi cấu trúc hoặc ý nghĩa của câu lệnh SQL đã được định nghĩa trước. Do đó, ngay cả khi người dùng nhập vào các chuỗi có chứa mã độc hoặc cú pháp SQL, hệ thống vẫn xử lý chúng như dữ liệu thông thường, không thực thi như một phần của câu lệnh SQL.
+
+Nhờ cơ chế “biên dịch trước” và tách biệt giữa lệnh và dữ liệu, PreparedStatement ngăn chặn hiệu quả việc chèn mã SQL độc hại, từ đó bảo vệ hệ thống khỏi các cuộc tấn công SQL Injection.

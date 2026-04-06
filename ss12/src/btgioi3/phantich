@@ -1,0 +1,7 @@
+Khi làm việc với Stored Procedure có tham số đầu ra (OUT parameter), JDBC yêu cầu lập trình viên phải gọi phương thức registerOutParameter() trước khi thực thi câu lệnh. Lý do là vì JDBC cần biết trước kiểu dữ liệu và vị trí của tham số đầu ra để có thể chuẩn bị vùng nhớ và cơ chế nhận dữ liệu trả về từ cơ sở dữ liệu.
+
+Nếu không gọi registerOutParameter(), JDBC sẽ không biết tham số nào là OUT, dẫn đến lỗi như “The column index is out of range” hoặc không thể lấy được giá trị trả về. Việc đăng ký này giúp driver ánh xạ chính xác giữa tham số trong Stored Procedure và biến trong chương trình Java.
+
+Ngoài ra, mỗi kiểu dữ liệu trong SQL cần được ánh xạ sang một hằng số tương ứng trong lớp java.sql.Types. Nếu tham số đầu ra trong SQL có kiểu DECIMAL (thường dùng cho tiền tệ), thì trong Java cần đăng ký bằng hằng số Types.DECIMAL. Điều này đảm bảo dữ liệu được chuyển đổi đúng kiểu và tránh lỗi khi đọc kết quả.
+
+Tóm lại, registerOutParameter() là bước bắt buộc để JDBC nhận diện và xử lý tham số đầu ra một cách chính xác, đồng thời đảm bảo việc chuyển đổi kiểu dữ liệu giữa SQL và Java diễn ra đúng đắn.

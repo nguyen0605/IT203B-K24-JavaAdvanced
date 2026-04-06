@@ -1,0 +1,7 @@
+Vấn đề xảy ra khi sử dụng Statement và nối chuỗi SQL trực tiếp với dữ liệu đầu vào, đặc biệt là với các kiểu số thực như double. Ở các hệ điều hành hoặc cấu hình vùng miền (Locale) khác nhau, cách biểu diễn số thực có thể khác nhau, ví dụ: một số nơi sử dụng dấu chấm (37.5), trong khi nơi khác lại dùng dấu phẩy (37,5). Khi nối chuỗi trực tiếp vào câu lệnh SQL, giá trị này được chèn vào dưới dạng văn bản, dẫn đến nguy cơ sai cú pháp SQL nếu định dạng không phù hợp với hệ quản trị cơ sở dữ liệu.
+
+PreparedStatement giải quyết vấn đề này thông qua việc sử dụng các phương thức như setDouble() và setInt(). Khi sử dụng các phương thức này, lập trình viên không cần quan tâm đến định dạng dấu chấm hay dấu phẩy của hệ điều hành, vì dữ liệu không còn được truyền dưới dạng chuỗi nữa mà được gửi xuống cơ sở dữ liệu dưới dạng kiểu dữ liệu nhị phân (binary) đúng với kiểu đã khai báo.
+
+Cụ thể, câu lệnh SQL được định nghĩa trước với các tham số dạng dấu hỏi chấm (?), sau đó được biên dịch trước (pre-compiled). Khi gọi các phương thức như setDouble() hoặc setInt(), JDBC driver sẽ tự động chuyển đổi giá trị số sang định dạng chuẩn mà cơ sở dữ liệu có thể hiểu, независимо với thiết lập Locale của hệ điều hành.
+
+Nhờ vậy, dù người dùng nhập 37.5 hay hệ thống đang dùng định dạng 37,5, giá trị vẫn được xử lý chính xác và không gây lỗi cú pháp SQL. Điều này giúp tăng tính ổn định, chính xác và đảm bảo ứng dụng hoạt động nhất quán trên nhiều môi trường khác nhau.
