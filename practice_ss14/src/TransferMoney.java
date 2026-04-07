@@ -16,7 +16,7 @@ public class TransferMoney {
                 Connection conn = DriverManager.getConnection(URL, USER, PASS)
         ) {
 
-            // 🔥 Bắt đầu transaction
+            // Bắt đầu transaction
             conn.setAutoCommit(false);
 
             // 1. Kiểm tra số dư
